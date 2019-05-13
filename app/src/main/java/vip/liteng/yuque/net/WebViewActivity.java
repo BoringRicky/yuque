@@ -1,0 +1,116 @@
+package vip.liteng.yuque.net;
+
+import android.content.Intent;
+import android.os.Build;
+import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import butterknife.BindView;
+import vip.liteng.common.utils.base.ObjectsHelper;
+import vip.liteng.log.Logger;
+import vip.liteng.yuque.R;
+import vip.liteng.yuque.base.BaseActivity;
+
+/**
+ * @author RickyLee
+ */
+public class WebViewActivity extends BaseActivity {
+
+    private static final String TAG = "WebViewActivity";
+
+    public static final String KEY_URL = "load_url";
+    public static final int MAX_PROGRESS = 100;
+
+    @BindView(R.id.wv_web_view) WebView mWebView;
+
+    private Intent mIntent;
+    private String mUrl;
+
+    @Override
+    protected int getContentViewId() {
+        return R.layout.activity_web_view;
+    }
+
+    @Override
+    protected void created() {
+        Logger.tag(TAG);
+
+        initUrl();
+
+        setupWebView();
+
+        load();
+
+        addClients();
+    }
+
+    private void addClients() {
+        mWebView.setWebChromeClient(new YuqueWebChromeClient());
+        mWebView.setWebViewClient(new YuqueWebViewClient());
+    }
+
+    private void load() {
+        mWebView.loadUrl(mUrl);
+    }
+
+    private void setupWebView() {
+        WebSettings webSettings = mWebView.getSettings();
+        //5.0以上开启混合模式加载
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
+        //允许js代码
+        webSettings.setJavaScriptEnabled(true);
+        //允许SessionStorage/LocalStorage存储
+        webSettings.setDomStorageEnabled(true);
+
+        webSettings.setDatabaseEnabled(false);
+        //禁用放缩
+        webSettings.setDisplayZoomControls(false);
+        webSettings.setBuiltInZoomControls(false);
+    }
+
+    private void initUrl() {
+        mIntent = getIntent();
+        if (ObjectsHelper.isNull(mIntent)) {
+            return;
+        }
+
+        mUrl = mIntent.getStringExtra(KEY_URL);
+        //        if (TextUtils.isEmpty(mUrl)) {
+        //            mUrl = Url.OAUTH2_NON_WEB;
+        //            mUrl = Url.OAUTH2;
+        //        }
+    }
+
+    private class YuqueWebChromeClient extends WebChromeClient {
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            super.onProgressChanged(view, newProgress);
+        }
+    }
+
+    private class YuqueWebViewClient extends WebViewClient {
+        private StringBuilder mBuilder = new StringBuilder();
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            mBuilder.append(url).append("\n");
+            Logger.e(url);
+            view.loadUrl(url);
+            return super.shouldOverrideUrlLoading(view, url);
+        }
+    }
+}
