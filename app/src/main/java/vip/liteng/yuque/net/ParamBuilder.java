@@ -9,6 +9,7 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import vip.liteng.log.Logger;
 import vip.liteng.yuque.Constants;
 import vip.liteng.yuque.net.sign.HmacSha1;
 
@@ -16,22 +17,51 @@ import vip.liteng.yuque.net.sign.HmacSha1;
  * @author LiTeng
  * @date 2019-05-13
  */
-public class ParamBuilder {
+class ParamBuilder {
 
-    public static final int CODE_LEN = 40;
-    public static final char[] DIGITS_LOWER = {
+    private static final int CODE_LEN = 40;
+    private static final char[] DIGITS_LOWER = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
 
-    public static String sortSignParams(Map<String, String> params) {
+    static String generateOAuthUrl() {
+        StringBuilder builder = new StringBuilder(Url.YU_QUE_API_OAUTH2);
+        builder.append("?");
+        builder.append(sortParams2String(authorizeParams(), false));
+
+        String url = builder.toString();
+        url = url.substring(0, url.length() - 1);
+
+        Logger.e(url);
+
+        return url;
+    }
+
+    private static Map<String, String> authorizeParams() {
+        Map<String, String> params = new HashMap<>(5);
+        params.put("client_id", Constants.CLIENT_ID);
+        params.put("code", generateCode());
+        params.put("response_type", "code");
+        params.put("scope", "group,repo,topic,doc,artboard");
+        params.put("timestamp", System.currentTimeMillis() + "");
+
+        String sortedParams = sortParams2String(params, true);
+        params.put("sign", HmacSha1.signSha1(sortedParams));
+
+        return params;
+    }
+
+    private static String sortParams2String(Map<String, String> params, boolean encode) {
         StringBuilder builder = new StringBuilder();
         Map<String, String> sortedMapData = new TreeMap<>(new MapKeyComparator());
         sortedMapData.putAll(params);
+
         try {
             for (Map.Entry<String, String> entry : sortedMapData.entrySet()) {
                 builder.append(entry.getKey());
                 builder.append("=");
-                builder.append(URLEncoder.encode(entry.getValue(), Constants.UTF_8));
+                String urlEncode = URLEncoder.encode(entry.getValue(), Constants.UTF_8);
+                builder.append(encode ? urlEncode : entry.getValue());
                 builder.append("&");
             }
         } catch (UnsupportedEncodingException e) {
@@ -41,17 +71,6 @@ public class ParamBuilder {
         paramStr = paramStr.substring(0, paramStr.length() - 1);
 
         return paramStr;
-    }
-
-    public static String authorizeSign() {
-        Map<String, String> params = new HashMap<>(5);
-        params.put("client_id", Constants.CLIENT_ID);
-        params.put("scope", "group,repo,topic,doc,artboard");
-        params.put("code", generateCode());
-        params.put("timestamp", System.currentTimeMillis() + "");
-        params.put("response_type", "code");
-
-        return HmacSha1.signSha1(params);
     }
 
     public static String generateCode() {

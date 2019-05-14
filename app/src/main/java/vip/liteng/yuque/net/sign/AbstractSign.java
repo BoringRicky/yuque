@@ -22,10 +22,10 @@ public abstract class AbstractSign {
     /**
      * 签名过程
      *
-     * @param params 需要签名的参数
+     * @param paramString 需要签名的参数串
      * @return 签名后的字符串
      */
-    protected abstract String sign(Map<String, String> params);
+    protected abstract String sign(String paramString);
 
     protected String base64(byte[] data) {
         return Base64.encodeToString(data, Base64.DEFAULT);

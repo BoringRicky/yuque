@@ -29,9 +29,15 @@ task clean(type: Delete) {
 ext {
     junit = 'junit:junit:4.12'
 
-    retrofit = 'com.squareup.retrofit2:retrofit:2.5.0'
+    retrofit2 = 'com.squareup.retrofit2:retrofit:2.5.0'
 
     timber = 'com.jakewharton.timber:timber:4.7.1'
+
+    gson = 'com.google.code.gson:gson:2.8.2'
+    converter_gson = 'com.squareup.retrofit2:converter-gson:2.5.0'
+
+    butterknife = 'com.jakewharton:butterknife:10.1.0'
+    butterknife_compiler = 'com.jakewharton:butterknife-compiler:10.1.0'
 
     androidx = [
             'appcompat'       : "androidx.appcompat:appcompat:1.0.2",

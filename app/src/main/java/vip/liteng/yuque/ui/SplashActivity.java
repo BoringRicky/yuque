@@ -27,7 +27,6 @@ public class SplashActivity extends BaseActivity {
         mLifecycleHandler.postDelayed(() -> {
             Bundle args = new Bundle();
             args.putString(WebViewActivity.KEY_URL, Url.OAUTH2_NON_WEB);
-//            args.putString(WebViewActivity.KEY_URL, Url.OAUTH2);
             IntentUtil.openActivity(this, WebViewActivity.class, args);
             finish();
         }, DELAY);

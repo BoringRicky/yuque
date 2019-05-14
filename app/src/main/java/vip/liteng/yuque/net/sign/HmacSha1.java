@@ -1,17 +1,11 @@
 package vip.liteng.yuque.net.sign;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.TreeMap;
+import android.text.TextUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import vip.liteng.log.Logger;
 import vip.liteng.yuque.Constants;
-import vip.liteng.yuque.net.ParamBuilder;
 
 /**
  * @author LiTeng
@@ -19,9 +13,9 @@ import vip.liteng.yuque.net.ParamBuilder;
  */
 public class HmacSha1 extends AbstractSign {
 
-    public static String signSha1(Map<String, String> params) {
+    public static String signSha1(String paramString) {
         AbstractSign sign = new HmacSha1();
-        return sign.sign(params);
+        return sign.sign(paramString);
     }
 
     @Override
@@ -30,41 +24,19 @@ public class HmacSha1 extends AbstractSign {
     }
 
     @Override
-    public String sign(Map<String, String> params) {
+    public String sign(String paramString) {
         String sha1 = null;
-        //Sort data
-        if (params != null) {
-//            try {
-
-                Logger.e("排序前的Sign参数 = " + params);
-
-                String sortedParams = ParamBuilder.sortSignParams(params);
-
-                Logger.e("排序后的Sign参数 = " + sortedParams);
-
-//                byte[] key = Constants.CLIENT_SECRET.getBytes(Constants.UTF8);
-//                byte[] key = "client_secret".getBytes();
-                byte[] key = Constants.CLIENT_SECRET.getBytes();
-
-                byte[] data = sortedParams.getBytes();
-                String encode = encode(key, data);
-
-                Logger.e("Sha1 后 = " + encode);
-
-                sha1 = base64(encode.getBytes());
-
-                Logger.e("Base64 后 = " + sha1);
-
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
+        if (!TextUtils.isEmpty(paramString)) {
+            byte[] key = Constants.CLIENT_SECRET.getBytes();
+            byte[] data = paramString.getBytes();
+            String encode = encode(key, data);
+            sha1 = base64(encode.getBytes());
         }
         return sha1;
     }
 
     private String encode(byte[] key, byte[] data) {
         try {
-
             SecretKeySpec secretKeySpec = new SecretKeySpec(key, getSignType());
             Mac mac = Mac.getInstance(getSignType());
             mac.init(secretKeySpec);
@@ -76,7 +48,7 @@ public class HmacSha1 extends AbstractSign {
         }
     }
 
-    public static String byte2hex(byte[] b) {
+    private String byte2hex(byte[] b) {
         StringBuilder hs = new StringBuilder();
         String temp;
         for (int n = 0; b != null && n < b.length; n++) {

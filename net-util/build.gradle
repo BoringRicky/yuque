@@ -1,18 +1,17 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion = rootProject.COMPILE_SDK_VERSION as int
+    compileSdkVersion 28
+
 
     defaultConfig {
-        applicationId rootProject.PACKAGE_NAME
-
-        minSdkVersion rootProject.MIN_SDK_VERSION as int
-        targetSdkVersion rootProject.TARGET_SDK_VERSION as int
-
-        versionCode rootProject.VERSION_CODE as int
-        versionName rootProject.VERSION_NAME
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -22,10 +21,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
-    }
 }
 
 dependencies {
@@ -34,23 +29,17 @@ dependencies {
     implementation project(":log-util")
     implementation project(":common-utils")
 
-    implementation androidx.appcompat
-    implementation androidx.constraintlayout
-
     implementation retrofit2
 
     implementation rx2.java
     implementation rx2.android
 
-    implementation butterknife
-    annotationProcessor butterknife_compiler
-
+    implementation gson
+    implementation converter_gson
 
     testImplementation junit
 
     androidTestImplementation androidx.test.runner
     androidTestImplementation androidx.test.espresso
-
-
 
 }

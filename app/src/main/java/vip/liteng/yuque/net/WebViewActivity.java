@@ -69,6 +69,7 @@ public class WebViewActivity extends BaseActivity {
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webSettings.setAppCacheEnabled(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
         //允许js代码
@@ -76,10 +77,8 @@ public class WebViewActivity extends BaseActivity {
         //允许SessionStorage/LocalStorage存储
         webSettings.setDomStorageEnabled(true);
 
-        webSettings.setDatabaseEnabled(false);
         //禁用放缩
         webSettings.setDisplayZoomControls(false);
-        webSettings.setBuiltInZoomControls(false);
     }
 
     private void initUrl() {
@@ -89,28 +88,14 @@ public class WebViewActivity extends BaseActivity {
         }
 
         mUrl = mIntent.getStringExtra(KEY_URL);
-        //        if (TextUtils.isEmpty(mUrl)) {
-        //            mUrl = Url.OAUTH2_NON_WEB;
-        //            mUrl = Url.OAUTH2;
-        //        }
+        if (TextUtils.isEmpty(mUrl)) {
+            return;
+        }
     }
 
     private class YuqueWebChromeClient extends WebChromeClient {
-        @Override
-        public void onProgressChanged(WebView view, int newProgress) {
-            super.onProgressChanged(view, newProgress);
-        }
     }
 
     private class YuqueWebViewClient extends WebViewClient {
-        private StringBuilder mBuilder = new StringBuilder();
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            mBuilder.append(url).append("\n");
-            Logger.e(url);
-            view.loadUrl(url);
-            return super.shouldOverrideUrlLoading(view, url);
-        }
     }
 }
