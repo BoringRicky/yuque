@@ -12,6 +12,6 @@ public class Constants {
     public static final String CLIENT_SECRET = "uXbAS5WlmNoGq1EOAM2SGxpBOEaqmvBsWqdjeY7b";
 
     public static final String STATE = "Android";
-    public static final String UTF8 = "utf-8";
+    public static final String UTF_8 = "UTF-8";
 
 }

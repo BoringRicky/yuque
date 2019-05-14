@@ -1,7 +1,8 @@
 package vip.liteng.yuque.net;
 
+import java.net.URLEncoder;
+
 import vip.liteng.yuque.Constants;
-import vip.liteng.yuque.net.sign.AbstractSign;
 
 /**
  * @author LiTeng
@@ -24,9 +25,9 @@ public class Url {
 
     public static final String OAUTH2_NON_WEB = YU_QUE_API_OAUTH2
             + "?client_id=" + Constants.CLIENT_ID
-            + "&code=" + AbstractSign.generateCode()
+            + "&code=" + ParamBuilder.generateCode()
             + "&response_type=code"
-            + "&scope=group,repo,topic,doc,artboard"
+            + "&scope="+ URLEncoder.encode("group,repo,topic,doc,artboard")
             + "&timestamp=" + System.currentTimeMillis()
             + "&sign=" + ParamBuilder.authorizeSign()
             ;
